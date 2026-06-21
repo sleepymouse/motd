@@ -40,10 +40,10 @@ tasks.named('test') {
  */
 bootBuildImage {
     // Pick a stable Ubuntu Jammy-based builder
-    builder = "paketobuildpacks/builder-jammy-tiny"
+    builder = "paketobuildpacks/builder-jammy-base"
 
     // Runtime image (equivalent to a base JRE image like eclipse-temurin)
-    runImage = "paketobuildpacks/run-jammy-tiny"
+    runImage = "paketobuildpacks/run-jammy-base"
 
     // Force Java version inside the image
     environment = [
