@@ -11,6 +11,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      GITOPS_PAT: ${{ secrets.GITOPS_PAT }}
 
     steps:
       - name: Checkout
@@ -49,3 +51,15 @@ jobs:
 
       - name: Push image
         run: docker push "${{ steps.meta.outputs.primary }}"
+
+      - name: Update image tag in gitops repo
+        run: |
+          SHA=$(echo '${{ github.sha }}' | cut -c1-7)
+          git clone https://x-access-token:${GITOPS_PAT}@github.com/sleepymouse/gitops.git gitops-repo
+          cd gitops-repo
+          sed -i "s/tag: .*/tag: \"${SHA}\"/" gitops-repo/environments/dev/motd-values.yaml
+          git config user.email "ci@github.com"
+          git config user.name "GitHub Actions"
+          git add gitops-repo/environments/dev/motd-values.yaml
+          git commit -m "ci: update motd image tag to ${SHA}"
+          git push
