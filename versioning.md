@@ -1,62 +1,37 @@
 # Versioning
 
-This project uses [axion-release-plugin](https://github.com/allegro/axion-release-plugin) to derive the version from git tags. The JAR filename and container image tag are always in sync.
+This project uses the short git commit SHA (first 7 characters) as the container image tag. This ensures every build produces a unique, immutable tag that is traceable back to the exact source commit.
 
-## How it works
+## Image tag format
 
-The version is determined by the state of the git tree relative to the most recent tag:
-
-- **Tagged commit** — the version is the tag exactly, with no suffix
-- **Untagged commit** — the version is the next patch increment with a `-SNAPSHOT` suffix
-
-The `SNAPSHOT` suffix indicates a development build that has not been formally released.
-
-## Tagging convention
-
-Tags must be prefixed with `v`:
-
-```bash
-git tag v1.2.3
+```
+ghcr.io/sleepymouse/motd:<sha>
 ```
 
-Without the `v` prefix the plugin will not recognise the tag.
+For example, a commit with SHA `a3f9c12ef...` produces:
+
+```
+ghcr.io/sleepymouse/motd:a3f9c12
+```
+
+## Why commit SHA?
+
+- Every push to `main` produces a unique tag — no manual tagging required
+- Tags are immutable; the same SHA always refers to the same image
+- ArgoCD Image Updater can detect new tags and trigger automatic deployments
+- Any deployed image can be traced back to its exact source commit
 
 ## Release workflow
 
-To produce a release build:
+Every push to `main` triggers the build pipeline, which:
 
-1. Commit all changes as normal
-2. Create a tag on that commit:
-   ```bash
-   git tag v0.1.0
-   ```
-3. Push the tag to trigger the build pipeline:
-   ```bash
-   git push origin --tags
-   ```
+1. Runs tests
+2. Builds the container image
+3. Tags it with the short commit SHA
+4. Pushes it to GHCR
 
-The pipeline will produce:
-- `motd-0.1.0.jar`
-- `ghcr.io/sleepymouse/motd:0.1.0`
+No manual tagging or version management is required.
 
-## Version progression examples
+## Gradle version
 
-| Action | Resulting version |
-|---|---|
-| Tag `v0.4.0` and push | `0.4.0` |
-| Commit to main (no tag) | `0.4.1-SNAPSHOT` |
-| Tag `v0.4.1` and push | `0.4.1` |
-| Commit to main (no tag) | `0.4.2-SNAPSHOT` |
-| Tag `v0.5.0` and push | `0.5.0` |
-
-## Controlling the version
-
-The patch number is incremented automatically. The minor and major numbers are only changed by explicitly choosing a higher tag:
-
-| Tag you create | Version produced |
-|---|---|
-| `v0.4.1` | `0.4.1` — patch release |
-| `v0.5.0` | `0.5.0` — minor release |
-| `v1.0.0` | `1.0.0` — major release |
-
-You are always in control — nothing is bumped automatically beyond patch snapshots between releases.
+The project still uses the [axion-release-plugin](https://github.com/allegro/axion-release-plugin) for the Gradle build version (JAR filename etc.), but this is decoupled from the container image tag. The container image tag is always the commit SHA.
