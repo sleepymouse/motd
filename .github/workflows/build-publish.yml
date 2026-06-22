@@ -37,9 +37,9 @@ jobs:
       - name: Compute image name
         id: meta
         run: |
-          VERSION=$(./gradlew properties -q | grep "^version:" | awk '{print $2}')
+          SHA=$(echo '${{ github.sha }}' | cut -c1-7)
           BASE="ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
-          echo "primary=${BASE}:${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "primary=${BASE}:${SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Test
         run: ./gradlew test
