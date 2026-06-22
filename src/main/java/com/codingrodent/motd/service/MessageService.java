@@ -25,4 +25,8 @@ public class MessageService {
     public Message getRandomMessage() {
         return messages.get(ThreadLocalRandom.current().nextInt(messages.size()));
     }
+
+    public int getCount() {
+        return messages.size();
+    }
 }
