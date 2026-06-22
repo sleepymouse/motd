@@ -1,0 +1,3 @@
+
+${AnsiColor.BLACK}${AnsiBackground.GREEN}MOTD Service  ${application.formatted-version}   Spring Boot ${spring-boot.formatted-version}   Java ${java.version}   O/S ${os.name} ${os.version}
+${AnsiColor.BLACK}${AnsiBackground.BRIGHT_WHITE}
