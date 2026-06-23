@@ -44,10 +44,10 @@ jobs:
           echo "primary=${BASE}:${SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Test
-        run: ./gradlew test
+        run: ./gradlew test -PbuildNumber=${{ github.run_number }}
 
       - name: Build image
-        run: ./gradlew bootBuildImage --imageName="${{ steps.meta.outputs.primary }}"
+        run: ./gradlew bootBuildImage --imageName="${{ steps.meta.outputs.primary }}" -PbuildNumber=${{ github.run_number }}
 
       - name: Push image
         run: docker push "${{ steps.meta.outputs.primary }}"

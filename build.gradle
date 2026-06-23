@@ -6,7 +6,9 @@ plugins {
 }
 
 group = 'com.codingrodent.gitops'
-version = scmVersion.version
+version = project.hasProperty('buildNumber')
+    ? scmVersion.version.replace('-SNAPSHOT', "-${project.buildNumber}")
+    : scmVersion.version
 
 tasks.named("bootJar") {
     layered {
