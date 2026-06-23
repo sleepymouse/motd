@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api")
 public class MotdController {
+
+    private static final Logger log = LoggerFactory.getLogger(MotdController.class);
 
     private final MessageService messageService;
 
@@ -36,6 +40,7 @@ public class MotdController {
     )
     @GetMapping(value = "/motd", produces = MediaType.APPLICATION_JSON_VALUE)
     public Message getMessageOfTheDay() {
+        log.debug("getMessageOfTheDay called");
         return messageService.getRandomMessage();
     }
 
@@ -51,6 +56,7 @@ public class MotdController {
     )
     @GetMapping(value = "/motd/count", produces = MediaType.APPLICATION_JSON_VALUE)
     public MessageCount getMessageCount() {
+        log.debug("getMessageCount called");
         return new MessageCount(messageService.getCount());
     }
 }
